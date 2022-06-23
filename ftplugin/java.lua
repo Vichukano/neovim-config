@@ -40,8 +40,7 @@ local config = {
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   -- for a list of options
   settings = {
-    java = {
-    }
+    java = {}
   },
   -- Language server `initializationOptions`
   -- You need to extend the `bundles` with paths to jar files
@@ -51,9 +50,16 @@ local config = {
   --
   -- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
   init_options = {
-    bundles = {}
+    bundles = {
+    },
   },
 }
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
 require('jdtls').start_or_attach(config)
+config['on_attach'] = function(client, bufnr)
+  -- With `hotcodereplace = 'auto' the debug adapter will try to apply code changes
+  -- you make during a debug session immediately.
+  -- Remove the option if you do not want that.
+  require('jdtls').setup_dap({ hotcodereplace = 'auto' })
+end

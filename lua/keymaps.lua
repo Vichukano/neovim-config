@@ -15,6 +15,9 @@ map('', '<right>', ':echoe "Use l"<CR>', {noremap = true, silent = false})
 map('n', '<leader>lc', '<cmd>set list!<CR>', default_opts)
 -- Сохранить содержимое по CTRL-S
 map('n', '<C-s>', '<cmd>w<CR>', default_opts)
+-- Копирование и вставка из системный буфер обмена
+map('n', '<leader>y', '"*y', default_opts)
+map('n', '<leader>p', '"*p', default_opts)
 -- Перемещение в режиме редактирования
 map('i', '<C-h>', '<left>', default_opts)
 map('i', '<C-j>', '<down>', default_opts)
