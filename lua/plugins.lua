@@ -27,16 +27,28 @@ return require('packer').startup(function()
     -- Тагбар для навигации по коду
     use 'preservim/tagbar'
     -- Файловый менеджер
-    use { 'kyazdani42/nvim-tree.lua',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function() require'nvim-tree'.setup {
-        view = {
-            width = 30,
-            height = 30,
-            side = "left",
-            number = false 
-        }
-    } end, }
+    use {
+      "nvim-neo-tree/neo-tree.nvim",
+      branch = "v2.x",
+      requires = { 
+        "nvim-lua/plenary.nvim",
+        "kyazdani42/nvim-web-devicons", -- not strictly required, but recommended
+        "MunifTanjim/nui.nvim",
+      },
+      config = function ()
+      vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
+      vim.fn.sign_define("DiagnosticSignError", {text = " ", texthl = "DiagnosticSignError"})
+      vim.fn.sign_define("DiagnosticSignWarn", {text = " ", texthl = "DiagnosticSignWarn"})
+      vim.fn.sign_define("DiagnosticSignInfo", {text = " ", texthl = "DiagnosticSignInfo"})
+      vim.fn.sign_define("DiagnosticSignHint", {text = "", texthl = "DiagnosticSignHint"})
+      require("neo-tree").setup({
+        close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
+        popup_border_style = "rounded",
+        enable_diagnostics = true,
+        sort_case_insensitive = false, -- used when sorting files and directories in the tree
+      })
+      end
+    }
     -- Поисковик
     use {'nvim-telescope/telescope.nvim', requires = {{'nvim-lua/plenary.nvim'}}}
     -- По нажатию jk, jj выход из режима редактирования
@@ -79,7 +91,15 @@ return require('packer').startup(function()
     -- Стартовая страница, если просто набрать vim в консоле
     use 'mhinz/vim-startify'
     -- LSP, подсветка синтаксиса, автодополнение, навигация
-    use {'nvim-treesitter/nvim-treesitter'}
+    use {
+      'nvim-treesitter/nvim-treesitter',
+      require'nvim-treesitter.configs'.setup {
+        ensure_installed = {'java'},
+        highlight = {
+          enable = true
+        }
+      }
+    }
     use 'neovim/nvim-lspconfig'
     -- LSP java
     use 'mfussenegger/nvim-jdtls'

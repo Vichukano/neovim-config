@@ -47,7 +47,7 @@ map('n', '<leader>h', ':nohl<CR>', default_opts)
 --Для временной вставки из буфера, чтобы отключить авто идент
 vim.o.pastetoggle='<leader>p'
 -- Файловый менеджер
-map('n', '<leader>e', '<cmd>NvimTreeToggle<CR><cmd>NvimTreeRefresh<CR>', default_opts)
+map('n', '<leader>e', '<cmd>Neotree<CR>', default_opts)
 -- Поисковик телескоп
 map('n', '<leader>ff', '<cmd>Telescope find_files<cr>', default_opts)
 map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', default_opts)
