@@ -1,6 +1,7 @@
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-local workspace_dir = '/home/vichukano/.lsp/' .. project_name
+local home = os.getenv('HOME')
+local workspace_dir = home .. '/.lsp/' .. project_name
 local config = {
   -- The command that starts the language server
   -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
@@ -17,14 +18,14 @@ local config = {
     '--add-modules=ALL-SYSTEM',
     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-    '-javaagent:/home/vichukano/.local/opt/jdtls-launcher/jdtls/plugins/lombok.jar',
+    '-javaagent:' .. home .. '/.local/opt/jdtls-launcher/jdtls/plugins/lombok.jar',
     -- 💀
-    '-jar', '/home/vichukano/.local/opt/jdtls-launcher/jdtls/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
+    '-jar', home ..'/.local/opt/jdtls-launcher/jdtls/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
          -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                       ^^^^^^^^^^^^^^
          -- Must point to the                                                     Change this to
          -- eclipse.jdt.ls installation                                           the actual version
     -- 💀
-    '-configuration', '/home/vichukano/.local/opt/jdtls-launcher/jdtls/config_linux',
+    '-configuration', home .. '/.local/opt/jdtls-launcher/jdtls/config_linux',
                     -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^^^^^^
                     -- Must point to the                      Change to one of `linux`, `win` or `mac`
                     -- eclipse.jdt.ls installation            Depending on your system.

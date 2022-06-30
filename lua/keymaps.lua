@@ -31,7 +31,7 @@ map('n', '<C-h>', '<C-w>h', default_opts)
 map('n', '<C-l>', '<C-w>l', default_opts)
 map('n', '<C-j>', '<C-w>j', default_opts)
 map('n', '<C-k>', '<C-w>k', default_opts)
-map('n', '<leader>c', ':bd<CR>', default_opts) -- закрыть текущий буфер
+map('n', '<leader>c', ':Bdelete<CR>', default_opts) -- закрыть текущий буфер
 map('n', '<leader>wc', '<C-w>c', default_opts) -- закрыть текущее окно
 map('n', '<leader>wv', '<C-w>v', default_opts) -- разделить по вертикали 
 map('n', '<leader>ws', '<C-w>s', default_opts) -- разделить по горизонтали 
@@ -47,7 +47,7 @@ map('n', '<leader>h', ':nohl<CR>', default_opts)
 --Для временной вставки из буфера, чтобы отключить авто идент
 vim.o.pastetoggle='<leader>p'
 -- Файловый менеджер
-map('n', '<leader>e', '<cmd>Neotree<CR>', default_opts)
+map('n', '<leader>e', '<cmd>Neotree toggle<CR>', default_opts)
 -- Поисковик телескоп
 map('n', '<leader>ff', '<cmd>Telescope find_files<cr>', default_opts)
 map('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', default_opts)
@@ -58,7 +58,7 @@ map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', default_opts)
 map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', default_opts)
 map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', default_opts)
 map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', default_opts)
-map('n', '<leader>ls', '<cmd>lua vim.lsp.buf.signature_help()<CR>', default_opts)
+map('n', 'Q', '<cmd>lua vim.lsp.buf.signature_help()<CR>', default_opts)
 map('n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', default_opts)
 map('n', '<leader>lf', '<cmd>lua vim.lsp.buf.formatting()<CR>', default_opts)
 map('n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>', default_opts)
