@@ -161,7 +161,7 @@ return require('packer').startup(function()
     use {
       'nvim-treesitter/nvim-treesitter',
       require'nvim-treesitter.configs'.setup {
-        ensure_installed = {'java'},
+        ensure_installed = {'java', 'rust'},
         highlight = {
           enable = true
         }
@@ -177,4 +177,6 @@ return require('packer').startup(function()
     use 'hrsh7th/nvim-cmp'
     use 'L3MON4D3/LuaSnip'
     use 'saadparwaiz1/cmp_luasnip'
+    -- Rust LSP
+    use 'simrat39/rust-tools.nvim'
 end)
