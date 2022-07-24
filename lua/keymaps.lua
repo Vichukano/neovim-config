@@ -63,6 +63,7 @@ map('n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', default_opts)
 map('n', '<leader>lf', '<cmd>lua vim.lsp.buf.formatting()<CR>', default_opts)
 map('n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>', default_opts)
 map('n', '<leader>lt', '<cmd>:TagbarToggle<CR>', default_opts)
+map('n', '<leader>ld', '<cmd>lua vim.diagnostic.open_float()<CR>', default_opts)
 -- Автокомплит для скобок
 map('i', '{', '{}<Esc>ha', default_opts)
 map('i', '(', '()<Esc>ha', default_opts)
