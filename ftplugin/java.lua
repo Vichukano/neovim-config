@@ -1,47 +1,118 @@
--- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-local home = os.getenv('HOME')
-local workspace_dir = home .. '/.local/share/' .. project_name
+local jdtls_ok, jdtls = pcall(require, "jdtls")
+if not jdtls_ok then
+  vim.notify "JDTLS not found, install with `:LspInstall jdtls`"
+  return
+end
+
+-- Installation location of jdtls by nvim-lsp-installer
+local JDTLS_LOCATION = vim.fn.stdpath "data" .. "/lsp_servers/jdtls"
+
+-- Data directory - change it to your liking
+local HOME = os.getenv "HOME"
+local WORKSPACE_PATH = HOME .. "/.lsp/workspace/java/"
+
+-- Only for Linux and Mac
+local SYSTEM = "linux"
+if vim.fn.has "mac" == 1 then
+  SYSTEM = "mac"
+end
+
+local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+local workspace_dir = WORKSPACE_PATH .. project_name
+
+local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
+local root_dir = require("jdtls.setup").find_root(root_markers)
+if root_dir == "" then
+  return
+end
+
+local extendedClientCapabilities = jdtls.extendedClientCapabilities
+extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
+
 local config = {
-  -- The command that starts the language server
-  -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
   cmd = {
-    -- 💀
-    'java', -- or '/path/to/java11_or_newer/bin/java'
-            -- depends on if `java` is in your $PATH env variable and if it points to the right version.
-    '-Declipse.application=org.eclipse.jdt.ls.core.id1',
-    '-Dosgi.bundles.defaultStartLevel=4',
-    '-Declipse.product=org.eclipse.jdt.ls.core.product',
-    '-Dlog.protocol=true',
-    '-Dlog.level=ALL',
-    '-Xms1g',
-    '--add-modules=ALL-SYSTEM',
-    '--add-opens', 'java.base/java.util=ALL-UNNAMED',
-    '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-    '-javaagent:' .. home .. '/.local/jdtls/plugins/lombok.jar',
-    -- 💀
-    '-jar', home ..'/.local/jdtls/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
-         -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                       ^^^^^^^^^^^^^^
-         -- Must point to the                                                     Change this to
-         -- eclipse.jdt.ls installation                                           the actual version
-    -- 💀
-    '-configuration', home .. '/.local/jdtls/config_linux',
-                    -- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^^^^^^
-                    -- Must point to the                      Change to one of `linux`, `win` or `mac`
-                    -- eclipse.jdt.ls installation            Depending on your system.
-    -- 💀
-    -- See `data directory configuration` section in the README
-    '-data', workspace_dir 
+    "java",
+    "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+    "-Dosgi.bundles.defaultStartLevel=4",
+    "-Declipse.product=org.eclipse.jdt.ls.core.product",
+    "-Dlog.protocol=true",
+    "-Dlog.level=ALL",
+    "-Xms1g",
+    "--add-modules=ALL-SYSTEM",
+    "--add-opens",
+    "java.base/java.util=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.lang=ALL-UNNAMED",
+    "-javaagent:" .. JDTLS_LOCATION .. "/lombok.jar",
+    "-jar",
+    vim.fn.glob(JDTLS_LOCATION .. "/plugins/org.eclipse.equinox.launcher_*.jar"),
+    "-configuration",
+    JDTLS_LOCATION .. "/config_" .. SYSTEM,
+    "-data",
+    workspace_dir,
   },
-  -- 💀
-  -- This is the default if not provided, you can remove it. Or adjust as needed.
-  -- One dedicated LSP server & client will be started per unique root_dir
-  root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'}),
+
   -- Here you can configure eclipse.jdt.ls specific settings
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   -- for a list of options
   settings = {
-    java = {}
+    java = {
+      eclipse = {
+        downloadSources = true,
+      },
+      configuration = {
+        updateBuildConfiguration = "interactive",
+      },
+      maven = {
+        downloadSources = true,
+      },
+      implementationsCodeLens = {
+        enabled = true,
+      },
+      referencesCodeLens = {
+        enabled = true,
+      },
+      references = {
+        includeDecompiledSources = true,
+      },
+      format = {
+        enabled = true,
+        settings = {
+          url = vim.fn.stdpath "config" .. "/lang-servers/java-google-format.xml",
+          profile = "GoogleStyle",
+        },
+      },
+    },
+    signatureHelp = { enabled = true },
+    completion = {
+      favoriteStaticMembers = {
+        "org.hamcrest.MatcherAssert.assertThat",
+        "org.hamcrest.Matchers.*",
+        "org.hamcrest.CoreMatchers.*",
+        "org.junit.jupiter.api.Assertions.*",
+        "java.util.Objects.requireNonNull",
+        "java.util.Objects.requireNonNullElse",
+        "org.mockito.Mockito.*",
+      },
+    },
+    contentProvider = { preferred = "fernflower" },
+    extendedClientCapabilities = extendedClientCapabilities,
+    sources = {
+      organizeImports = {
+        starThreshold = 9999,
+        staticStarThreshold = 9999,
+      },
+    },
+    codeGeneration = {
+      toString = {
+        template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+      },
+      useBlocks = true,
+    },
+  },
+
+  flags = {
+    allow_incremental_sync = true,
   },
   -- Language server `initializationOptions`
   -- You need to extend the `bundles` with paths to jar files
@@ -51,16 +122,10 @@ local config = {
   --
   -- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
   init_options = {
-    bundles = {
-    },
+    bundles = {},
   },
 }
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
-require('jdtls').start_or_attach(config)
-config['on_attach'] = function(client, bufnr)
-  -- With `hotcodereplace = 'auto' the debug adapter will try to apply code changes
-  -- you make during a debug session immediately.
-  -- Remove the option if you do not want that.
-  require('jdtls').setup_dap({ hotcodereplace = 'auto' })
-end
+jdtls.start_or_attach(config)
+

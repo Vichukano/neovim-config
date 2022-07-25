@@ -56,7 +56,7 @@ map('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', default_opts)
 -- LSP
 map('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', default_opts)
 map('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', default_opts)
-map('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', default_opts)
+map('n', 'gr', '<cmd>NiceReference<CR>', default_opts)
 map('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', default_opts)
 map('n', 'Q', '<cmd>lua vim.lsp.buf.signature_help()<CR>', default_opts)
 map('n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>', default_opts)
