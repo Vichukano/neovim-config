@@ -1,3 +1,10 @@
+require("nvim-lsp-installer").setup {}
+require 'nvim-treesitter.configs'.setup {
+    ensure_installed = { 'java', 'rust' },
+      highlight = {
+        enable = true
+    }
+}
 local nvim_lsp = require'lspconfig'
 local opts = {
     tools = { -- rust-tools options
@@ -21,3 +28,6 @@ local opts = {
     },
 }
 require('rust-tools').setup(opts)
+require'lspconfig'.lemminx.setup{}
+require'lspconfig'.sumneko_lua.setup{}
+

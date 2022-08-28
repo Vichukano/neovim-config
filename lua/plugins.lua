@@ -161,17 +161,10 @@ return require('packer').startup(function()
   use 'mhinz/vim-startify'
   -- LSP, подсветка синтаксиса, автодополнение, навигация
   use {
-    "williamboman/nvim-lsp-installer",
-    require("nvim-lsp-installer").setup {}
+    "williamboman/nvim-lsp-installer"
   }
   use {
-    'nvim-treesitter/nvim-treesitter',
-    require 'nvim-treesitter.configs'.setup {
-      ensure_installed = { 'java', 'rust' },
-      highlight = {
-        enable = true
-      }
-    }
+    'nvim-treesitter/nvim-treesitter'
   }
   use 'neovim/nvim-lspconfig'
   -- go to reference в сплывающем окошке

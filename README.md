@@ -8,3 +8,6 @@ Windows: git clone https://github.com/wbthomason/packer.nvim "$env:LOCALAPPDATA\
 
 put files to ~/.config/nvim/ directory
 run: nvim +PackerSync
+
+
+install language servers via :LspInstall
