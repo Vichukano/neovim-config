@@ -27,13 +27,20 @@ local modes = {
 
 -- #000000 black 
 -- #ffffff white 
+local black = { num = 0, hex = "#000000" }
+local white = { num = 15, hex = "#ffffff" }
+local green = { num = 2, hex = "#008000" }
+local aqua = { num = 14, hex = "#00ffff" }
+local yellow = { num = 11, hex = "#ffff00" }
+local teal = { num = 6, hex = "#008080" }
+local gray = { num = 7, hex = "#c0c0c0" }
 local colors = {
-    ["n"]  = { fg = "#FFFFFF", bg = "#007ACC" },
-    ["i"]  = { fg = "#000000", bg = "#90EE90" },
-    ["v"]  = { fg = "#000000", bg = "#FFFF00" },
-    ["v"]  = { fg = "#000000", bg = "#FFFF00" },
-    ["V"]  = { fg = "#000000", bg = "#FFFF00" },
-    [""] = { fg = "#000000", bg = "#FFFF00" },
+    ["n"]  = { fg = black, bg = teal },
+    ["i"]  = { fg = black, bg = green },
+    ["v"]  = { fg = black, bg = yellow },
+    ["v"]  = { fg = black, bg = yellow },
+    ["V"]  = { fg = black, bg = yellow },
+    [""] = { fg = black, bg = yellow },
 }
 
 -- ==OPTIONS==
@@ -68,7 +75,7 @@ opt.clipboard = "unnamedplus"                                                   
 opt.fileencoding = "utf-8"                                                               -- the encoding written to a file
 opt.encoding = "utf-8"                                                                   -- the encoding
 opt.syntax = "enable"                                                                    -- syntax highlight 
-opt.termguicolors = true                                                                 -- better colors 
+opt.termguicolors = false                                                                -- use only 256 xterm colors 
 opt.showmode = false                                                                     -- all modes now in statusline
 opt.compatible = false                                                                   -- disable legasy 
 
@@ -108,8 +115,8 @@ end
 
 local function update_color()
   local current_mode = vim.api.nvim_get_mode().mode
-  local color = colors[current_mode] or { fg = "#000000", bg = "#90ee90" }
-  vim.api.nvim_set_hl(0, "StatusLine", { fg = color.fg, bg = color.bg })
+  local color = colors[current_mode] or { fg = white, bg = black }
+  vim.api.nvim_set_hl(0, "StatusLine", { ctermfg = color.fg.num, ctermbg = color.bg.num })
 end
 
 -- STATUSLINE PATTERN
