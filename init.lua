@@ -100,17 +100,48 @@ map("n", "<S-Tab>", ":bp<CR>", {silent = true, noremap = true})
 map("n", "<leader>bn", ":bn<CR>", {silent = true, noremap = true})
 map("n", "<leader>bp", ":bp<CR>", {silent = true, noremap = true})
 map("n", "<leader>bq", ":bd<CR>", {})
--- FILE EXPLORER 
-map("n", "<leader>e", ":Ex<CR>", {}) 
 -- MARKS
 map("n", "<leader>ml", ":marks<CR>", {})
 map("n", "<leader>md", ":delm!<CR>", {silent = true})
-
+-- Replace like helix
+map("v", "R", [["_dp]], {silent = true}) 
+-- FILE EXPLORER
+-- FILE EXPLORER TOGGLER
+local function toggle_netrw()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "netrw" then
+      if #vim.api.nvim_list_wins() > 1 then
+        vim.api.nvim_win_close(win, false)
+      else
+        vim.cmd("bprevious")
+      end
+      return
+    end
+  end
+  vim.cmd("Explore")
+end
+map("n", "<leader>e", toggle_netrw, { silent = true, noremap = true })
 
 -- ==STATUSLINE==
-function _G.mode()
-  local current_mode = vim.api.nvim_get_mode().mode
-  return (modes[current_mode][1] or "UNKNOWN" )
+-- BUFFER FUNCTIONS
+local function get_listed_bufs()
+  local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+  table.sort(bufs, function(a, b) return a.bufnr < b.bufnr end)
+  return bufs
+end
+
+local function buf_count()
+  return #get_listed_bufs()
+end
+
+local function buf_index()
+  local current = vim.api.nvim_get_current_buf()
+  for i, buf in ipairs(get_listed_bufs()) do
+    if buf.bufnr == current then
+      return i
+    end
+  end
+  return 1
 end
 
 local function update_color()
@@ -119,16 +150,26 @@ local function update_color()
   vim.api.nvim_set_hl(0, "StatusLine", { ctermfg = color.fg.num, ctermbg = color.bg.num })
 end
 
+function _G.mode()
+  local current_mode = vim.api.nvim_get_mode().mode
+  return (modes[current_mode][1] or "UNKNOWN" )
+end
+
+function _G.buf_info_str()
+  return "buf:" .. buf_index() .. "/" .. buf_count()
+end
+
 -- STATUSLINE PATTERN
 opt.statusline = table.concat({
-  " %{v:lua.mode()}",                                                                    -- mode(INSERT, NORMAL, VISUAL, etc.)  
-  " %f",                                                                                 -- file name 
-  " %m",                                                                                 -- file change flag 
-  "%=",                                                                                  -- alignment 
-  "%l:%c ",                                                                              -- column and row numbers 
-  "[%L] ",                                                                               -- count of lines 
-  "(%p%%) ",                                                                             -- current position in % 
-  "| %{&fileencoding?&fileencoding:&encoding} |",                                        -- file encoding 
+  " %{v:lua.mode()}",                                                                    -- mode(INSERT, NORMAL, VISUAL, etc.)
+  " %f",                                                                                 -- file name
+  " %m",                                                                                 -- file change flag
+  "%=",                                                                                  -- alignment
+  "%l:%c ",                                                                              -- column and row numbers
+  "[%L] ",                                                                               -- count of lines
+  "(%p%%) ",                                                                             -- current position in %
+  "| %{&fileencoding?&fileencoding:&encoding} ",                                         -- file encoding
+  "| %{v:lua.buf_info_str()} |",                                                         -- buffer index / total count
 })
 
 -- ==EVENT CALLBACKS==
